@@ -1,0 +1,94 @@
+import pyautogui
+import pyperclip
+import time
+import pandas
+import openpyxl
+
+pyautogui.PAUSE = 1  # Intervalo de um comando para o outro
+# Abrir o navegador
+pyautogui.moveTo(x=402, y=744)
+pyautogui.rightClick()
+pyautogui.click(x=454, y=636)
+
+
+# ------------ Entrar no sistema da empresa ------------
+pyperclip.copy("https://drive.google.com/drive/folders/149xknr9JvrlEnhNWO49zPcw0PW5icxga"
+               "")
+# Sempre que tiver caracteres especiais ou letras com acento, usa puperclip
+pyautogui.hotkey("ctrl", "v")
+pyautogui.press("ENTER")
+
+time.sleep(4) #Intervalo apenas do útimo comando, para dar tempo de abrir o navegador
+
+# ------------ Navegar no sistem a encontrar a base de vendas ------------
+pyautogui.click(x=231, y=266, clicks=2)
+time.sleep(2)
+
+
+# ------------ Fazer o donwload da base de vendas ------------
+pyautogui.click(x=282, y=312) # Clicar no arquivo
+pyautogui.click(x=1209, y=170) # Clicar nos 3 pontinhos (ou em fazer download se não estiver logado)
+pyautogui.click(x=1141, y=491) # Clicar em fazer Download nos 3 pontinhos
+time.sleep(3) # Esperar o download acabar
+
+
+# ------------ Importar a base de vendas para o Python ------------
+
+tabela = pandas.read_excel(r"C:\Users\Gabriel\Downloads\Vendas - Dez.xlsx")
+# Colocando o "r" antes do caminho, o python lê o texto sem interpretar códigos.
+
+
+# ------------ Calcular os indicadores da empresa ------------
+faturamento = tabela["Valor Final"].sum()
+quantidade = tabela["Quantidade"].sum()
+
+
+#  ------------ Enviar um email para a diretoria com os indicadores de venda ------------
+
+# Abrir aba
+pyautogui.hotkey("ctrl", "t")
+
+# Entrar no link do email
+pyautogui.PAUSE = 1
+pyperclip.copy("https://mail.google.com/mail/u/0/?hl=pt-BR#inbox")
+pyautogui.hotkey("ctrl", "v")
+pyautogui.press("ENTER")
+time.sleep(5)
+
+# Clicar no botão escrever
+pyautogui.click(x=101, y=199)
+
+# Preencher as informações do email
+pyautogui.write("gabrielkondo12@gmail.com")
+pyautogui.press("tab") # Seleciona o email, e caso queira mandar para mais de um destinatário, vai apertando "tab"
+
+pyautogui.press("tab") # Pular para o campo do assunto
+pyperclip.copy("Relatório de vendas")
+pyautogui.hotkey("ctrl", "v")
+
+pyautogui.press("tab") # Pular para o campo de corpo do email
+texto = f"""
+Prezados,
+
+Segue o relatório de vendas.
+Faturamento = R$ {faturamento:,.2f}         
+Quantidade de produtos vendidos = {quantidade:,}
+
+Qualquer dúvida, estou à disposição.
+Att.,
+Gabriel
+
+"""
+
+
+        # ,.2f serve para separar duas casas decimais
+        # Dois pontos depois da variável, avisa que será formatado
+        # Colocando 3 aspas duplas, o python permite texto de mais de uma linha
+        # Colocando "f" (formatar) antes dos aspas, o python permite que o texto seja formatado, permitindo colocar a variável
+        # Colocando a variável entre {}, o python substitui pelo valor que foi atribuido
+
+pyperclip.copy(texto)
+pyautogui.hotkey("ctrl", "v")
+
+# Enviar email
+pyautogui.hotkey("ctrl", "enter")
