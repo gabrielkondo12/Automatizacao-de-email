@@ -1,0 +1,8 @@
+import time
+import pyautogui
+
+# Comando para descobrir a posição (em coordenadas) do mouse
+time.sleep(3)
+pyautogui.position()
+
+print(pyautogui.position())
